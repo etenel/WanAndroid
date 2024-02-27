@@ -10,11 +10,11 @@ plugins {
 
 android {
     namespace = "com.wls.poke"
-    compileSdk = 33
-
+    compileSdk = 34
+    buildFeatures.buildConfig = true
     defaultConfig {
         applicationId = "com.wls.poke"
-        minSdk = 24
+        minSdk = 25
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -26,7 +26,13 @@ android {
     }
 
     buildTypes {
+        debug{
+            // 日志打印开关
+            buildConfigField("Boolean", "LOG_ENABLE", "true")
+        }
         release {
+            // 日志打印开关
+            buildConfigField("Boolean", "LOG_ENABLE", "false")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -45,7 +51,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -55,6 +61,7 @@ android {
 
 
 }
+ksp{}
 androidAopConfig {
 
     // enabled 为 false 切面不再起作用，默认不写为 true
@@ -77,31 +84,35 @@ androidAopConfig {
 //修改、增加、删除匹配切面的话，就会走全量编译
 }
 dependencies {
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.runtime)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.foundation.layout)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.iconsExtended)
-    implementation(libs.androidx.compose.runtime.livedata)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.ui.util)
 
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.compose.compiler)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.androidx.core.splashscreen)
+
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.wear.compose.material)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
+    implementation(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.ui.util)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
 
     //hilt代替dagger
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.hilt.common)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.glide)
+    implementation(libs.glide.compose)
     //联网
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)

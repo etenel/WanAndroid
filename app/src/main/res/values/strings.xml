@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Poke</string>
+    <string name="app_name">PokeMon</string>
+    <string name="not_connected">网络未连接</string>
+    <string name="home">首页</string>
+    <string name="favorite">收藏</string>
+    <string name="person">我的</string>
 </resources>
