@@ -1,5 +1,5 @@
 [versions]
-accompanist = "0.32.0"
+accompanist = "0.34.0"
 activityKtx = "1.8.2"
 androidDesugarJdkLibs = "2.0.4"
 # AGP and tools should be updated together
@@ -8,20 +8,21 @@ androidTools = "31.2.1"
 androidxActivity = "1.8.2"
 androidxAppCompat = "1.6.1"
 androidxBrowser = "1.7.0"
-androidxComposeBom = "2024.02.00"
-androidxComposeCompiler = "1.5.7"
+androidxComposeBom = "2024.02.01"
+androidxComposeCompiler = "1.5.10"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxConstraintlayout="2.1.4"
+androidxConstraintlayoutCompose="1.0.1"
 androidxCore = "1.12.0"
 androidxCoreSplashscreen = "1.0.1"
 androidxDataStore = "1.0.0"
 androidxEspresso = "3.5.1"
-androidxHiltNavigationCompose = "1.1.0"
+androidxHiltNavigationCompose = "1.2.0"
 androidxJunit = "1.1.5"
 androidxLifecycle = "2.7.0"
-androidxMacroBenchmark = "1.2.2"
+androidxMacroBenchmark = "1.2.3"
 androidxMetrics = "1.0.0-beta01"
-androidxNavigation = "2.7.6"
+androidxNavigation = "2.7.7"
 androidxProfileinstaller = "1.3.1"
 androidxStartup = "1.1.1"
 androidxTestCore = "1.5.0"
@@ -29,11 +30,12 @@ androidxTestExt = "1.1.5"
 androidxTestRules = "1.5.0"
 androidxTestRunner = "1.5.2"
 androidxTracing = "1.2.0"
-androidxUiAutomator = "2.2.0"
+androidxUiAutomator = "2.3.0"
 androidxWindowManager = "1.2.0"
 androidxWork = "2.9.0"
 aop="1.3.1"
-coil = "2.4.0"
+coil = "2.5.0"
+constraintlayoutCompose = "1.0.1"
 databindingCompiler = "3.1.4"
 dependencyGuard = "0.4.3"
 firebaseBom = "32.7.0"
@@ -46,15 +48,15 @@ gmsPlugin = "4.4.0"
 googleOss = "17.0.1"
 googleOssPlugin = "0.10.6"
 gson = "2.10.1"
-hilt = "2.48.1"
-hiltCommon = "1.1.0"
-hiltExt = "1.1.0"
+hilt = "2.50"
+hiltCommon = "1.2.0"
+hiltExt = "1.2.0"
 jacoco = "0.8.7"
 junit4 = "4.13.2"
 kotlin = "1.9.10"
 kotlinxCoroutines = "1.7.3"
-kotlinxDatetime = "0.4.1"
-kotlinxSerializationCore = "1.5.1"
+kotlinxDatetime = "0.5.0"
+kotlinxSerializationCore = "1.6.0"
 kotlinxSerializationJson = "1.6.0"
 ksp = "1.9.10-1.0.13"
 lifecycleCompiler = "2.7.0"
@@ -64,6 +66,7 @@ lifecycleViewmodelKtx = "2.7.0"
 navigationSafeArgsGradlePlugin = "2.7.6"
 navigationUiKtx = "2.7.6"
 navigationFragmentKtx = "2.7.6"
+pagingCompose = "3.2.1"
 workTesting="2.9.0"
 lint = "31.2.1"
 okhttp = "4.12.0"
@@ -100,12 +103,17 @@ androidx-compose-material3-windowSizeClass = { group = "androidx.compose.materia
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
 androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
 androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "androidxComposeRuntimeTracing" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-graphics={group="androidx.compose.ui",name="ui-graphics"}
 androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+
 androidx-constraintlayout={group="androidx.constraintlayout",name="constraintlayout",version.ref="androidxConstraintlayout"}
+androidx-constraintlayout-compose={group="androidx.constraintlayout",name="constraintlayout-compose",version.ref="androidxConstraintlayoutCompose"}
+androidx-constraintlayout-compose-v101 = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
 androidx-dataStore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
@@ -125,6 +133,7 @@ androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fr
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationSafeArgsGradlePlugin" }
 androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationUiKtx" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "androidxProfileinstaller" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }

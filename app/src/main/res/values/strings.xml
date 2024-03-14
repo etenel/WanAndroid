@@ -4,4 +4,15 @@
     <string name="home">首页</string>
     <string name="favorite">收藏</string>
     <string name="person">我的</string>
+    <string name="request_time_out">网络请求超时，请稍后重试</string>
+    <string name="network_error">网络连接失败，请稍后重试</string>
+    <string name="repose_error">网络请求错误，请稍后重试</string>
+    <string name="share_user">分享人：%1$s</string>
+    <string name="author">作者：%1$s</string>
+    <string name="date">时间：%1$s</string>
+    <string name="login">登录</string>
+    <string name="please_input_account">请输入账号</string>
+    <string name="please_input_password">请输入密码</string>
+    <string name="forget_password">忘记密码</string>
+    <string name="ready_register">新人注册</string>
 </resources>

@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id ("kotlin-kapt")
+    id("kotlin-kapt")
     id("kotlinx-serialization")
     alias(libs.plugins.hilt)
     id("android.aop")
@@ -14,8 +14,8 @@ android {
     buildFeatures.buildConfig = true
     defaultConfig {
         applicationId = "com.wls.poke"
-        minSdk = 25
-        targetSdk = 33
+        minSdk = 24
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -26,7 +26,7 @@ android {
     }
 
     buildTypes {
-        debug{
+        debug {
             // 日志打印开关
             buildConfigField("Boolean", "LOG_ENABLE", "true")
         }
@@ -61,7 +61,7 @@ android {
 
 
 }
-ksp{}
+ksp {}
 androidAopConfig {
 
     // enabled 为 false 切面不再起作用，默认不写为 true
@@ -84,7 +84,7 @@ androidAopConfig {
 //修改、增加、删除匹配切面的话，就会走全量编译
 }
 dependencies {
-
+    api(project(":base"))
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.viewModelCompose)
     implementation(libs.androidx.core.ktx)
@@ -94,18 +94,20 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.constraintlayout.compose)
+    //implementation(libs.androidx.navigation.compose)
+
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.wear.compose.material)
     implementation(libs.androidx.compose.material3.windowSizeClass)
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.ui.util)
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
 
     //hilt代替dagger
     implementation(libs.androidx.hilt.navigation.compose)
@@ -119,9 +121,10 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.androidx.paging.compose)
     //aop插件
     implementation(libs.aspectj.core)
-    annotationProcessor(libs.aspectj.annotation)
+    kapt(libs.aspectj.annotation)
     //非必须项 👇，如果你想自定义切面需要用到，⚠️支持Java和Kotlin代码写的切面
     ksp(libs.aspectj.ksp)
 
@@ -129,7 +132,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    androidTestImplementation(libs.androidx.compose.ui.test)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.testManifest)
 }
