@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,9 +59,9 @@ import kotlinx.coroutines.launch
 fun HomeRoute(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     onBannerClick: (String) -> Unit,
+    articleDetail: (article: HomeArticleEntity.Data) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    paddingValues: PaddingValues
 ) {
     val banner by viewModel.banner.collectAsState()
     val items = viewModel.homeArticles.collectAsLazyPagingItems()
@@ -73,7 +72,8 @@ fun HomeRoute(
         refresh = viewModel::refresh,
         onBannerClick = onBannerClick,
         collectArticle = viewModel::collectArticle,
-        modifier = modifier.padding(paddingValues),
+        articleDetail =articleDetail,
+        modifier = modifier,
     )
 
 }
@@ -86,6 +86,7 @@ internal fun HomeScreen(
     refresh: () -> Unit,
     onBannerClick: (String) -> Unit,
     collectArticle: (article: HomeArticleEntity.Data) -> Unit,
+    articleDetail: (article: HomeArticleEntity.Data) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     RefreshList(
@@ -98,7 +99,7 @@ internal fun HomeScreen(
             Banners(banner, onShowSnackbar, onBannerClick)
 
         }) {
-        ArticlesItem(article = it, collectArticle)
+        ArticlesItem(article = it, collectArticle=collectArticle, articleDetail = articleDetail)
     }
 
 }
@@ -108,14 +109,15 @@ internal fun HomeScreen(
 @Composable
 fun ArticlesItem(
     article: HomeArticleEntity.Data,
-    collectArticle: (article: HomeArticleEntity.Data) -> Unit
+    articleDetail: (article: HomeArticleEntity.Data) -> Unit,
+    collectArticle: (article: HomeArticleEntity.Data) -> Unit,
 ) {
     Card(
         modifier = Modifier
             .padding(top = 10.dp)
             .fillMaxWidth()
             .clickable {
-
+                articleDetail(article)
             }, colors = CardDefaults.cardColors(Color.White)
     ) {
         Row(
@@ -174,7 +176,7 @@ fun ArticlesItem(
 @Composable
 fun Banners(
     banner: List<BannerEntity>, onShowSnackbar: suspend (String, String?) -> Boolean,
-    onBannerClick: (String) -> Unit
+    onBannerClick: (String) -> Unit,
 ) {
     if (banner.isEmpty()) return
     Box(
@@ -201,7 +203,7 @@ fun Banners(
 @Composable
 fun BannerItem(
     banner: BannerEntity, index: Int, onShowSnackbar: suspend (String, String?) -> Boolean,
-    onBannerClick: (String) -> Unit
+    onBannerClick: (String) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     GlideImage(
@@ -249,6 +251,7 @@ fun PreHome() {
         collectArticle = {
 
         },
+        articleDetail = {}
     )
 }
 

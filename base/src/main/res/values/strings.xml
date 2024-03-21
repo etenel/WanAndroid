@@ -3,4 +3,9 @@
     <string name="request_time_out">网络请求超时，请稍后重试</string>
     <string name="network_error">网络连接失败，请稍后重试</string>
     <string name="repose_error">网络请求错误，请稍后重试</string>
+    <string name="unknow_error">未知错误</string>
+    <string name="net_connect_timeout">请求网络超时</string>
+    <string name="data_error">数据解析错误</string>
+    <string name="connect_fail">连接服务器失败</string>
+    <string name="null_exception">空指针异常</string>
 </resources>

@@ -7,5 +7,5 @@ import kotlinx.serialization.Serializable
 data class BaseData<T>(
     val errorCode: Int = 0,
     val errorMsg: String = "",
-    val `data`: T
+    val `data`: T?=null,
 )

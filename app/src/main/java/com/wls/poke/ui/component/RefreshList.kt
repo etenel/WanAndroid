@@ -51,7 +51,8 @@ fun <T : Any> RefreshList(
 
     ) {
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .nestedScroll(pullToRefreshState.nestedScrollConnection)
             .fillMaxSize(),
     ) {
@@ -82,10 +83,7 @@ fun <T : Any> RefreshList(
 //                LogUtils.e(loadState.refresh, loadState.append, loadState.prepend)
 //                初次加载或者刷新数据
                 val loading = when {
-
                     loadState.prepend is LoadState.Loading -> loadState.prepend as LoadState.Loading
-
-
                     loadState.refresh is LoadState.Loading -> loadState.refresh as LoadState.Loading
                     else -> null
                 }
@@ -93,8 +91,6 @@ fun <T : Any> RefreshList(
                     loadState.prepend is LoadState.Error -> {
                         loadState.prepend as LoadState.Error
                     }
-
-
                     loadState.refresh is LoadState.Error -> {
                         loadState.refresh as LoadState.Error
                     }
@@ -116,8 +112,6 @@ fun <T : Any> RefreshList(
                     loadState.append is LoadState.Error -> loadState.append as LoadState.Error
                     else -> null
                 }
-
-
 //            刷新初始化数据
                 if (loading != null) {
                     repeat((0..10).count()) {
@@ -130,7 +124,6 @@ fun <T : Any> RefreshList(
                         delay(200)
                         pullToRefreshState.endRefresh()
                     }
-
                 }
 //            初始化失败
                 if (loadError != null) {

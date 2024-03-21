@@ -1,18 +1,22 @@
+@file:OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalLayoutApi::class
+)
+
 package com.wls.poke.ui.login
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +24,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,39 +40,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.wls.base.entity.ResultState
 import com.wls.poke.R
-import com.wls.poke.ui.login.viewmodel.LoginViewModel
+import com.wls.poke.ui.login.viewmodel.RegisterViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginRoute(
-    viewModel: LoginViewModel = hiltViewModel(),
-    registry: () -> Unit,
-    forgetPassword: () -> Unit
+fun RegisterRoute(
+    modifier: Modifier = Modifier,
+    viewModel: RegisterViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    LoginScreen(
-        login = viewModel::login,
-        registry = registry,
-        forgetPassword = forgetPassword,
-        state = state
+    RegisterScreen(
+        modifier = modifier,
+        regist = { _, _ -> }
     )
 }
 
 @Composable
-internal fun LoginScreen(
-    login: (account: String, password: String) -> Unit,
-    registry: () -> Unit,
-    forgetPassword: () -> Unit,
-    state: ResultState<Any?>
+fun RegisterScreen(
+    modifier: Modifier = Modifier,
+    regist: (account: String, password: String) -> Unit,
 ) {
     var account by remember {
         mutableStateOf("")
@@ -85,12 +79,7 @@ internal fun LoginScreen(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            //.padding(bottom=paddingValues.calculateBottomPadding())
-            .padding(
-                bottom = WindowInsets.systemBars
-                    .asPaddingValues()
-                    .calculateBottomPadding()
-            )
+            .navigationBarsPadding()
             .drawWithCache {
                 val primaryPath = Path()
                 val width = size.width / 10
@@ -147,9 +136,11 @@ internal fun LoginScreen(
     ) {
 
 
-        val (loginText, accountInput,
-            passwordInput, forgetPw,
-            loginButton, register) = createRefs()
+        val (
+            loginText, accountInput,
+            passwordInput, repeatPassword,
+            registerButton,
+        ) = createRefs()
         var passwordEnabled by remember {
             mutableStateOf(false)
         }
@@ -158,7 +149,7 @@ internal fun LoginScreen(
         }
         val coroutineScope = rememberCoroutineScope()
         Text(
-            text = stringResource(R.string.login),
+            text = stringResource(R.string.register),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.constrainAs(loginText) {
@@ -231,34 +222,11 @@ internal fun LoginScreen(
             shape = ShapeDefaults.Medium,
         )
 
-        TextButton(modifier = Modifier
-            .padding(end = 60.dp, top = 5.dp)
-            .constrainAs(forgetPw) {
-                top.linkTo(passwordInput.bottom)
-                end.linkTo(parent.end)
-            },
-            onClick = { forgetPassword() }) {
-            Text(text = stringResource(R.string.forget_password))
-        }
-        TextButton(modifier = Modifier
-            .padding(bottom = 10.dp)
-            .height(height = 50.dp)
-            .constrainAs(register) {
-                start.linkTo(parent.start)
-                bottom.linkTo(parent.bottom)
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            onClick = { registry() }) {
-            Text(text = stringResource(R.string.ready_register))
-        }
         OutlinedButton(
             modifier = Modifier
                 .padding(end = 20.dp, bottom = 20.dp)
                 .size(width = 100.dp, height = 50.dp)
-                .constrainAs(loginButton) {
+                .constrainAs(registerButton) {
                     bottom.linkTo(parent.bottom)
                     end.linkTo(parent.end)
                 },
@@ -267,21 +235,19 @@ internal fun LoginScreen(
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            onClick = { login(account, password) },
+            onClick = { regist(account, password) },
             shape = ShapeDefaults.Small
         ) {
-            Text(text = stringResource(id = R.string.login))
+            Text(text = stringResource(id = R.string.register))
         }
     }
-
-
 }
 
-
-@Preview(device = Devices.PHONE, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreLogin() {
-    val viewModel: LoginViewModel = hiltViewModel()
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    LoginScreen( { a, p -> }, {}, {}, state)
+fun PreRegister() {
+
+    RegisterScreen(
+        regist = { _, _ -> }
+    )
 }

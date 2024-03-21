@@ -1,6 +1,5 @@
 package com.wls.poke.ui.person.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -17,7 +16,6 @@ fun NavController.navigateToPersonGraph(navOptions: NavOptions? = null) {
 }
 
 fun NavGraphBuilder.personGraph(
-    paddingValues: PaddingValues,
     onShowSnackbar: suspend (String, String?) -> Boolean,
 ) {
     navigation(

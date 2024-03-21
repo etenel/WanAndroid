@@ -1,5 +1,5 @@
 [versions]
-accompanist = "0.34.0"
+accompanist = "0.32.0"
 activityKtx = "1.8.2"
 androidDesugarJdkLibs = "2.0.4"
 # AGP and tools should be updated together
@@ -8,7 +8,7 @@ androidTools = "31.2.1"
 androidxActivity = "1.8.2"
 androidxAppCompat = "1.6.1"
 androidxBrowser = "1.7.0"
-androidxComposeBom = "2024.02.01"
+androidxComposeBom = "2024.02.02"
 androidxComposeCompiler = "1.5.10"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxConstraintlayout="2.1.4"
@@ -82,10 +82,12 @@ turbine = "1.0.0"
 toastUtils="12.6"
 material="1.11.0"
 legacy-support-v4 = "1.0.0"
+navigationRuntimeKtx = "2.7.7"
 
 [libraries]
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 accompanist-testharness = { group = "com.google.accompanist", name = "accompanist-testharness", version.ref = "accompanist" }
+accompanist-webview = { group = "com.google.accompanist", name = "accompanist-webview", version.ref = "accompanist" }
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
@@ -113,10 +115,10 @@ androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
 androidx-constraintlayout={group="androidx.constraintlayout",name="constraintlayout",version.ref="androidxConstraintlayout"}
 androidx-constraintlayout-compose={group="androidx.constraintlayout",name="constraintlayout-compose",version.ref="androidxConstraintlayoutCompose"}
-androidx-constraintlayout-compose-v101 = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidxCoreSplashscreen" }
-androidx-dataStore-core = { group = "androidx.datastore", name = "datastore", version.ref = "androidxDataStore" }
+androidx-dataStore-core = { group = "androidx.datastore", name = "datastore-core",version.ref = "androidxDataStore" }
+androidx-dataStore-preference = { group = "androidx.datastore", name = "datastore-preferences",version.ref = "androidxDataStore" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-hilt-common = { module = "androidx.hilt:hilt-common", version.ref = "hiltCommon" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
@@ -207,6 +209,7 @@ ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devto
 work-testing = { group = "androidx.work", name = "work-testing", version.ref = "workTesting" }
 legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacy-support-v4" }
 androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version = "1.3.0" }
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

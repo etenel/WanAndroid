@@ -2,15 +2,17 @@ package com.wls.poke.http
 
 import com.wls.base.BaseApp.Companion.appContext
 import com.wls.base.utils.NetworkUtil
+import com.wls.poke.http.cookie.LoginCookieJar
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import java.io.File
-import javax.inject.Singleton
+import javax.inject.Inject
 
-@Singleton
-object RetrofitClient : BaseRetrofitClient() {
-    @Singleton
+
+class RetrofitClient @Inject constructor(
+    private val loginCookieJar: LoginCookieJar,
+) : BaseRetrofitClient() {
     val service by lazy {
         getService(ApiService::class.java, Api.BASE_URL)
     }
@@ -20,7 +22,7 @@ object RetrofitClient : BaseRetrofitClient() {
         val cacheSize = 10 * 1024 * 1024L // 10 MiB
         val cache = Cache(httpCacheDirectory, cacheSize)
         builder.cache(cache)
-            //  .cookieJar(cookieJar)
+            .cookieJar(loginCookieJar)
             .addInterceptor { chain ->
                 var request = chain.request()
 
@@ -30,18 +32,19 @@ object RetrofitClient : BaseRetrofitClient() {
                         .build()
                 }
                 val response = chain.proceed(request)
-                if (!NetworkUtil.isNetworkAvailable(appContext)) {
+                if (!NetworkUtil.isNetworkAvailable(appContext) ) {
                     val maxAge = 60 * 60
                     response.newBuilder()
                         .removeHeader("Pragma")
                         .header("Cache-Control", "public, max-age=$maxAge")
                         .build()
                 } else {
-                    val maxStale = 60 * 60 * 24 * 28 // tolerate 4-weeks stale
-                    response.newBuilder()
-                        .removeHeader("Pragma")
-                        .header("Cache-Control", "public, only-if-cached, max-stale=$maxStale")
-                        .build()
+                        val maxStale = 60 * 60 * 24 * 28 // tolerate 4-weeks stale
+                        response.newBuilder()
+                            .removeHeader("Pragma")
+                            .header("Cache-Control", "public, only-if-cached, max-stale=$maxStale")
+                            .build()
+
                 }
                 response
             }

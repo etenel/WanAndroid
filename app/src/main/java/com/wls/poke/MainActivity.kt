@@ -11,17 +11,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.wls.base.BaseActivity
+import com.wls.base.entity.ResultState
 import com.wls.poke.http.ConnectivityManagerNetworkMonitor
 import com.wls.poke.ui.WanApp
+import com.wls.poke.ui.login.navigation.navigateToLogin
 import com.wls.poke.ui.theme.WanTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -33,10 +34,11 @@ import kotlinx.coroutines.launch
 class MainActivity : BaseActivity() {
     private val connectivityManagerNetworkMonitor = ConnectivityManagerNetworkMonitor.networkMonitor
     private val viewModel: MainActivityViewModel by viewModels()
+    private lateinit var navController: NavHostController
+    private lateinit var uiState:ResultState<Unit>
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        var uiState: MainActivityViewModel.UIState by mutableStateOf(MainActivityViewModel.UIState.Loading)
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState
@@ -44,12 +46,11 @@ class MainActivity : BaseActivity() {
                         uiState = it
                     }
                     .collect()
-
             }
         }
         splashScreen.setKeepOnScreenCondition {
             when (uiState) {
-                MainActivityViewModel.UIState.Loading -> true
+              ResultState.Loading -> true
                 else -> false
             }
         }
@@ -65,7 +66,9 @@ class MainActivity : BaseActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.surface
                 ) {
+                    navController = rememberNavController()
                     WanApp(
+                        navController = navController,
                         windowSizeClass = calculateWindowSizeClass(activity = this),
                         connectivityManagerNetworkMonitor = connectivityManagerNetworkMonitor
                     )
@@ -73,12 +76,19 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
+
+    }
+
+    //跳转登录界面
+    override fun login() {
+        navController.navigateToLogin()
     }
 
     @Composable
-    private fun shouldUseDarkTheme(uiState: MainActivityViewModel.UIState): Boolean =
+    private fun shouldUseDarkTheme(uiState: ResultState<Unit>): Boolean =
         when (uiState) {
-            MainActivityViewModel.UIState.Loading -> isSystemInDarkTheme()
+           ResultState.Loading -> isSystemInDarkTheme()
             else -> isSystemInDarkTheme()
         }
 

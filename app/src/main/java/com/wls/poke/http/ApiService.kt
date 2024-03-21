@@ -1,7 +1,8 @@
 package com.wls.poke.http
 
-import com.wls.poke.entity.BannerEntity
 import com.wls.base.entity.BaseData
+import com.wls.base.entity.Null
+import com.wls.poke.entity.BannerEntity
 import com.wls.poke.entity.HomeArticleEntity
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -33,5 +34,13 @@ interface ApiService {
     //收藏
     @POST("lg/collect/{id}/json")
     suspend fun collect(@Path("id") id: Int): BaseData<Any>
+
+    //登录
+    @FormUrlEncoded
+    @POST("user/login")
+    suspend fun login(
+        @Field("username") username: String,
+        @Field("password") password: String
+    ): BaseData<Null>
 
 }

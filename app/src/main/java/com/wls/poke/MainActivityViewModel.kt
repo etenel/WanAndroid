@@ -1,31 +1,21 @@
 package com.wls.poke
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.wls.base.BaseViewModel
+import com.wls.base.entity.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor() : ViewModel() {
+class MainActivityViewModel @Inject constructor() : BaseViewModel<Unit>() {
 
-    val uiState = flowOf(UIState.Loading)
-        .map {
-            delay(1000)
-            UIState.DismissDialogEvent
+
+    init {
+        launch {
+            emitState(ResultState.Loading)
+            delay(1500)
+            emitState(ResultState.None)
         }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            UIState.Loading
-        )
-
-    sealed interface UIState {
-        data object DismissDialogEvent : UIState
-        data object Loading : UIState
     }
+
 }

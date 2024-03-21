@@ -7,4 +7,6 @@ import com.wls.base.BaseAppViewModel
  */
 class AppViewModel: BaseAppViewModel() {
 
+
+
 }

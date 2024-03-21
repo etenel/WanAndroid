@@ -96,7 +96,10 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.constraintlayout.compose)
     //implementation(libs.androidx.navigation.compose)
-
+    implementation(libs.accompanist.webview)
+    //datastore
+    implementation(libs.androidx.dataStore.core)
+    implementation(libs.androidx.dataStore.preference)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation)

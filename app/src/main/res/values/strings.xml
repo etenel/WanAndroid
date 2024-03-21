@@ -15,4 +15,5 @@
     <string name="please_input_password">请输入密码</string>
     <string name="forget_password">忘记密码</string>
     <string name="ready_register">新人注册</string>
+    <string name="register">注册</string>
 </resources>

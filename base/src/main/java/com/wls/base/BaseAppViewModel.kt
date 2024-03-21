@@ -1,6 +1,5 @@
 package com.wls.base
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wls.base.entity.BaseData
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -10,10 +9,10 @@ import kotlinx.coroutines.launch
 /**
  * APP全局ViewModel
  */
-open class BaseAppViewModel : ViewModel() {
+open class BaseAppViewModel : BaseViewModel<Unit>() {
 
     /** 请求异常（服务器请求失败，譬如：服务器连接超时等） */
-    private val _exception = MutableSharedFlow<Throwable>()
+    private val _exception = MutableSharedFlow<Exception>()
     val exception: SharedFlow<Throwable> = _exception
 
     /** 请求服务器返回错误（服务器请求成功但status错误，譬如：登录过期等） */
@@ -21,7 +20,7 @@ open class BaseAppViewModel : ViewModel() {
     val errorResponse: SharedFlow<BaseData<*>?> = _errorResponse
 
     /** emit请求出错 */
-    fun emitException(exception: Throwable) {
+    fun emitException(exception: Exception) {
         viewModelScope.launch {
             _exception.emit(exception)
         }

@@ -1,11 +1,11 @@
 package com.wls.poke.ui.login.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.wls.poke.ui.login.LoginRoute
+import com.wls.poke.ui.login.RegisterRoute
 
 const val loginRoute = "login_route"
 
@@ -15,11 +15,26 @@ fun NavController.navigateToLogin(navOptions: NavOptions? = null){
 
 
 fun NavGraphBuilder.loginScreen(
-    paddingValues: PaddingValues,
     forgetPassword: () -> Unit,
-    regist: () -> Unit
+    register: () -> Unit
 ) {
     composable(loginRoute) {
-        LoginRoute(paddingValues = paddingValues, forgetPassword =forgetPassword , registry = regist)
+        LoginRoute( forgetPassword =forgetPassword , registry = register)
+    }
+}
+
+const val registerRoute = "register_route"
+
+fun NavController.navigateToRegister(navOptions: NavOptions? = null) {
+    this.navigate(registerRoute, navOptions)
+}
+
+fun NavGraphBuilder.registerScreen() {
+    composable(
+        route = registerRoute,
+        //deepLinks = listOf(navDeepLink { uriPattern= }),
+//        arguments = listOf(navArgument(" "){type= NavType.StringType})
+    ) {
+        RegisterRoute()
     }
 }

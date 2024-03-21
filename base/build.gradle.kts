@@ -35,12 +35,13 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.lifecycle.runtimeCompose)
-    implementation(libs.androidx.lifecycle.viewModelCompose)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.google.material)
+    api(libs.androidx.lifecycle.runtimeCompose)
+    api(libs.androidx.lifecycle.viewModelCompose)
+    api(libs.kotlinx.serialization.json)
+    api(libs.androidx.core.ktx)
+    api(libs.androidx.activity.compose)
+    api(libs.google.material)
+    api(libs.retrofit.core)
     testImplementation(libs.junit4)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.espresso.core)

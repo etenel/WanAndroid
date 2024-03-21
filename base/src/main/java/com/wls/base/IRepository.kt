@@ -1,4 +1,4 @@
-package com.wls.poke.repository
+package com.wls.base
 
 /**
  * hilt注入使用，viewModel中指定类型
