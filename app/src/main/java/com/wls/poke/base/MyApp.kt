@@ -5,6 +5,7 @@ import com.wls.base.utils.LogUtils
 import com.wls.poke.BuildConfig
 import dagger.hilt.android.HiltAndroidApp
 
+
 @HiltAndroidApp
 class MyApp: BaseApp() {
     companion object {
@@ -16,6 +17,5 @@ class MyApp: BaseApp() {
         appViewModel = getAppViewModelProvider()[AppViewModel::class.java]
         LogUtils.config.setLogSwitch(BuildConfig.LOG_ENABLE)
             .setConsoleSwitch(BuildConfig.LOG_ENABLE)
-
     }
 }

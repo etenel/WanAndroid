@@ -45,7 +45,7 @@ fun WanNavHost(
             //   navController.navigateToForgetPassword()
         }, register = {
                navController.navigateToRegister()
-        })
+        }, onBack = navController::popBackStack)
         registerScreen()
 
     }

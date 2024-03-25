@@ -67,6 +67,7 @@ navigationSafeArgsGradlePlugin = "2.7.6"
 navigationUiKtx = "2.7.6"
 navigationFragmentKtx = "2.7.6"
 pagingCompose = "3.2.1"
+tbs = "44286"
 workTesting="2.9.0"
 lint = "31.2.1"
 okhttp = "4.12.0"
@@ -195,6 +196,7 @@ roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", versi
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+tbs = { group = "com.tencent.tbs",name="tbssdk", version.ref = "tbs" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 toastUtils={group="com.github.getActivity",name="ToastUtils",version.ref="toastUtils"}
 

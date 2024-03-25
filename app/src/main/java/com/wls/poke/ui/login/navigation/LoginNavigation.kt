@@ -16,10 +16,11 @@ fun NavController.navigateToLogin(navOptions: NavOptions? = null){
 
 fun NavGraphBuilder.loginScreen(
     forgetPassword: () -> Unit,
-    register: () -> Unit
+    register: () -> Unit,
+    onBack:()->Unit
 ) {
     composable(loginRoute) {
-        LoginRoute( forgetPassword =forgetPassword , registry = register)
+        LoginRoute( forgetPassword =forgetPassword , registry = register, onBack = onBack)
     }
 }
 

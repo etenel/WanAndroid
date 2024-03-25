@@ -53,23 +53,24 @@ import kotlinx.coroutines.launch
 fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
     registry: () -> Unit,
-    forgetPassword: () -> Unit
+    forgetPassword: () -> Unit,
+    onBack:()->Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LoginScreen(
         login = viewModel::login,
         registry = registry,
         forgetPassword = forgetPassword,
-        state = state
-    )
+        state = state,
+        onBack =onBack,)
 }
-
 @Composable
 internal fun LoginScreen(
     login: (account: String, password: String) -> Unit,
     registry: () -> Unit,
     forgetPassword: () -> Unit,
-    state: ResultState<Any?>
+    state: ResultState<Any?>,
+    onBack:()->Unit
 ) {
     var account by remember {
         mutableStateOf("")
@@ -79,8 +80,6 @@ internal fun LoginScreen(
     }
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondColor = MaterialTheme.colorScheme.primaryContainer
-
-
 
     ConstraintLayout(
         modifier = Modifier
@@ -147,9 +146,11 @@ internal fun LoginScreen(
     ) {
 
 
-        val (loginText, accountInput,
+        val (
+            loginText, accountInput,
             passwordInput, forgetPw,
-            loginButton, register) = createRefs()
+            loginButton, register,
+        ) = createRefs()
         var passwordEnabled by remember {
             mutableStateOf(false)
         }
@@ -274,7 +275,9 @@ internal fun LoginScreen(
         }
     }
 
-
+    if (state is ResultState.Success){
+        onBack()
+    }
 }
 
 
@@ -283,5 +286,5 @@ internal fun LoginScreen(
 fun PreLogin() {
     val viewModel: LoginViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    LoginScreen( { a, p -> }, {}, {}, state)
+    LoginScreen({ a, p -> }, {}, {}, state,{})
 }

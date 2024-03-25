@@ -4,6 +4,8 @@
 
 package com.wls.poke.ui.articledetail
 
+import android.annotation.SuppressLint
+import android.webkit.WebView
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,53 +18,57 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.web.AccompanistWebChromeClient
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.WebViewState
 import com.google.accompanist.web.rememberWebViewState
-import com.wls.poke.R
 import com.wls.poke.ui.articledetail.viewmodel.ArticleDetailViewModel
+
 
 @Composable
 fun ArticleDetailRoute(
     link: String,
     title: String,
     collect: Boolean,
-    onBackClick:()->Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ArticleDetailViewModel = hiltViewModel(),
 ) {
-
     ArticleDetailScreen(
         title = title,
         collect = collect,
-        onBackClick=onBackClick,
+        onBackClick = onBackClick,
         state = rememberWebViewState(url = link),
         modifier = modifier,
 
         )
 }
 
+@SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
 fun ArticleDetailScreen(
     title: String,
     collect: Boolean,
-    onBackClick:()->Unit,
+    onBackClick: () -> Unit,
     state: WebViewState,
     modifier: Modifier = Modifier,
 ) {
-
+    var pageTitle by remember { mutableStateOf(title) }
+    var progress by remember { mutableFloatStateOf(0.1f) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -94,11 +100,36 @@ fun ArticleDetailScreen(
         },
     ) { it ->
         WebView(
-            state = state, modifier = Modifier
+            state = state,
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
+                .padding(it),
+            chromeClient = remember {
+                object : AccompanistWebChromeClient() {
+                    override fun onReceivedTitle(view: WebView, title: String?) {
+                        super.onReceivedTitle(view, title)
+                        pageTitle = title ?: ""
+                    }
+
+                    override fun onProgressChanged(view: WebView, newProgress: Int) {
+                        super.onProgressChanged(view, newProgress)
+                        progress = newProgress / 100.0f
+                    }
+                }
+
+            },
+            onCreated = {
+                it.settings.run {
+                    javaScriptEnabled = true
+                    //微信文章文字显示
+                    domStorageEnabled = true
+                    //加载http请求的图片
+                    blockNetworkImage = false
+                }
+            },
         )
-    }
+}
+
 }
 
 @Preview(showBackground = true, showSystemUi = true)
