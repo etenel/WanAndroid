@@ -1,17 +1,40 @@
+@file:OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalLayoutApi::class
+)
+
 package com.wls.poke.ui.person
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Text
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import com.wls.poke.R
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.wls.poke.ui.person.viewmodel.PersonViewModel
 
 @Composable
-fun Person() {
-    val resource = stringResource(id = R.string.person)
-    Box{
-        Text(text = resource,color= Color.Magenta)
+fun PersonRoute(
+    modifier: Modifier = Modifier,
+    viewModel: PersonViewModel = hiltViewModel(),
+) {
+    PersonScreen(
 
-    }
+    )
+}
+
+@Composable
+fun PersonScreen(
+    modifier: Modifier = Modifier,
+) {
+
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PrePerson() {
+
+    PersonScreen(
+
+    )
 }

@@ -3,20 +3,16 @@
 package com.wls.poke.ui.component
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +28,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.platform.inspectable
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
@@ -108,14 +105,12 @@ fun ErrorContent(retry: () -> Unit) {
 }
 
 @Composable
-fun ErrorItem(retry: () -> Unit, modifier: Modifier = Modifier, message: String) {
-    Row(horizontalArrangement = Arrangement.Center, modifier = modifier.fillMaxSize()) {
+fun ErrorItem(retry: () -> Unit, modifier: Modifier = Modifier) {
+    Row(horizontalArrangement = Arrangement.Center, modifier = modifier.fillMaxWidth()) {
         Button(
-            modifier = modifier,
+            modifier = modifier.fillMaxWidth(),
             onClick = { retry() },
-            colors = ButtonColors(
-                containerColor = Color.LightGray, contentColor = Color.Magenta,
-                disabledContainerColor = Color.Unspecified, disabledContentColor = Color.Unspecified
+            colors =  ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer,
             )
         ) {
             Text(text = "重试")
@@ -125,29 +120,69 @@ fun ErrorItem(retry: () -> Unit, modifier: Modifier = Modifier, message: String)
 
 @Composable
 fun NoMoreItem() {
-    Text(
-        text = "没有更多了",
-        modifier = Modifier
-            .height(50.dp)
-            .fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
+    Box( modifier = Modifier
+        .height(50.dp)
+        .fillMaxWidth(),) {
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = "没有更多了",
+            textAlign = TextAlign.Center
+        )
+    }
 
 }
+@Composable
+fun NoMoreContent() {
+    Column( modifier = Modifier
+        .fillMaxSize(),
+        verticalArrangement = Arrangement.Center) {
+        Text(
+            text = "没有更多了",
+            textAlign = TextAlign.Center
+        )
+    }
 
+}
 @Composable
 fun LoadingItem(modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier.padding(top=10.dp), colors = CardDefaults.cardColors(Color.White)
+    Box(
+        modifier = modifier
+            .fillMaxSize()
     ) {
-        Column(Modifier.fillMaxSize()) {
-            Spacer(
-                modifier = Modifier
-                    .background(Color.LightGray)
-                    .height(80.dp)
-                    .fillMaxWidth()
+            CircularProgressIndicator(
+                modifier=Modifier.align(Alignment.Center)
             )
-        }
     }
+}
+
+@Preview
+@Composable
+private fun PreLoadingItem(){
+    LoadingItem()
+}
+@Preview
+@Composable
+private fun PreNoMoreItem(){
+    NoMoreItem()
+}
+@Preview
+@Composable
+private fun PreErrorItem(){
+    ErrorItem(retry = {})
+}
+@Preview
+@Composable
+private fun PreLoadingMore(){
+    LoadingMore()
+}
+@Preview
+@Composable
+private fun PreErrorContent(){
+    ErrorContent(retry = {})
+}
+@Preview
+@Composable
+private fun PreNoMoreContent(){
+    NoMoreContent()
 }
 

@@ -1,11 +1,10 @@
-package com.wls.poke.ui.person.navigation
+package com.wls.poke.ui.person
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.wls.poke.ui.person.Person
 
 const val personRoute = "person_route"
 private const val PERSON_GRAPH_PATTERN = "person_graph"
@@ -26,7 +25,7 @@ fun NavGraphBuilder.personGraph(
             //deepLinks = listOf(navDeepLink { uriPattern= }),
 //        arguments = listOf(navArgument(" "){type= NavType.StringType})
         ) {
-            Person()
+            PersonRoute()
         }
 
     }

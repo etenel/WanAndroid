@@ -9,6 +9,7 @@ import org.json.JSONException
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -18,7 +19,7 @@ object GlobalCoroutineExceptionHandler : CoroutineExceptionHandler {
         get() = CoroutineExceptionHandler //To change initializer of created properties use File | Settings | File Templates.
 
     override fun handleException(context: CoroutineContext, exception: Throwable) {
-        LogUtils.e(exception.message.orEmpty())
+        LogUtils.e(exception)
 //        if (exception is UndeliverableException) {
 //            return
 //        }
@@ -42,7 +43,7 @@ object GlobalCoroutineExceptionHandler : CoroutineExceptionHandler {
                 msg = "数据解析错误"
             }
 
-            is ConnectException -> {
+            is ConnectException, is UnknownHostException -> {
                 msg = "连接服务器失败"
             }
 
@@ -55,25 +56,31 @@ object GlobalCoroutineExceptionHandler : CoroutineExceptionHandler {
         }
     }
 
-     fun convertStatusCode(httpException: HttpException): String {
-        val msg: String
-        when {
-            httpException.code() == 500 -> {
-                msg = "服务器发生错误"
-            }
-            httpException.code() == 404 -> {
-                msg = "请求地址不存在"
-            }
-            httpException.code() == 403 -> {
-                msg = "请求被服务器拒绝"
-            }
-            httpException.code() == 307 -> {
-                msg = "请求被重定向到其他页面"
-            }
-            else -> {
-                msg = httpException.message()
-            }
+    fun convertStatusCode(httpException: HttpException): String = when {
+        httpException.code() == 504 -> {
+            "无效的请求"
         }
-        return msg
+
+        httpException.code() == 500 -> {
+            "服务器发生错误"
+        }
+
+        httpException.code() == 404 -> {
+            "请求地址不存在"
+        }
+
+        httpException.code() == 403 -> {
+            "请求被服务器拒绝"
+        }
+
+        httpException.code() == 307 -> {
+            "请求被重定向到其他页面"
+        }
+
+        else -> {
+            httpException.message()
+        }
     }
+
+
 }

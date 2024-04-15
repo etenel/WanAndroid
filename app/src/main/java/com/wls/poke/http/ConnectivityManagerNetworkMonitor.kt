@@ -63,6 +63,10 @@ class ConnectivityManagerNetworkMonitor : NetworkMonitor {
     }
         .conflate()
 
+    fun isConnected(): Boolean {
+        return connectivityManager?.isCurrentlyConnected()  == true
+    }
+
     @Suppress("DEPRECATION")
     private fun ConnectivityManager.isCurrentlyConnected() = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ->

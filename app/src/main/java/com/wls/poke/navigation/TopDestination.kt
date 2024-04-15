@@ -9,9 +9,9 @@ import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.wls.poke.R
-import com.wls.poke.ui.favorite.navigation.favoriteRoute
+import com.wls.poke.ui.favorite.favoriteRoute
 import com.wls.poke.ui.home.navigation.homeRoute
-import com.wls.poke.ui.person.navigation.personRoute
+import com.wls.poke.ui.person.personRoute
 
 enum class TopDestination(
     val selectedIcon: ImageVector,

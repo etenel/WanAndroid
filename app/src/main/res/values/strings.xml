@@ -11,8 +11,10 @@
     <string name="author">作者：%1$s</string>
     <string name="date">时间：%1$s</string>
     <string name="login">登录</string>
+    <string name="have_account">已有帐户</string>
     <string name="please_input_account">请输入账号</string>
     <string name="please_input_password">请输入密码</string>
+    <string name="repeat_input_password">再次输入密码</string>
     <string name="forget_password">忘记密码</string>
     <string name="ready_register">新人注册</string>
     <string name="register">注册</string>

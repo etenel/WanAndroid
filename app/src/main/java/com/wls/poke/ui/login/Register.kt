@@ -9,6 +9,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,11 +26,13 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -44,6 +48,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.wls.base.entity.ResultState
 import com.wls.poke.R
 import com.wls.poke.ui.login.viewmodel.RegisterViewModel
 import kotlinx.coroutines.delay
@@ -52,30 +58,36 @@ import kotlinx.coroutines.launch
 @Composable
 fun RegisterRoute(
     modifier: Modifier = Modifier,
+    toLogin:()-> Unit,
     viewModel: RegisterViewModel = hiltViewModel(),
 ) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     RegisterScreen(
         modifier = modifier,
-        regist = { _, _ -> }
+        toLogin=toLogin,
+        state = state,
+        registry = viewModel::registry
     )
 }
 
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    regist: (account: String, password: String) -> Unit,
+    state: ResultState<Any?>,
+    toLogin:()-> Unit,
+    registry: (account: String, password: String,rePassword:String) -> Unit,
 ) {
-    var account by remember {
+    var account by rememberSaveable {
         mutableStateOf("")
     }
-    var password by remember {
+    var password by rememberSaveable {
+        mutableStateOf("")
+    }
+    var rePassword by rememberSaveable {
         mutableStateOf("")
     }
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondColor = MaterialTheme.colorScheme.primaryContainer
-
-
-
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
@@ -119,7 +131,7 @@ fun RegisterScreen(
                     width * 5,
                     height * 8,
                     width * 10,
-                    height * 8
+                    height * 8.5f
                 )
                 fourPath.lineTo(width * 10, height * 10)
                 fourPath.lineTo(0f, height * 10)
@@ -137,11 +149,12 @@ fun RegisterScreen(
 
 
         val (
-            loginText, accountInput,
+            loginText, accountInput,login,
             passwordInput, repeatPassword,
+            registerProgress,
             registerButton,
         ) = createRefs()
-        var passwordEnabled by remember {
+        var passwordEnabled by rememberSaveable {
             mutableStateOf(false)
         }
         val passwordVisualTransformation by remember {
@@ -160,7 +173,7 @@ fun RegisterScreen(
 
         OutlinedTextField(
             modifier = Modifier
-                .padding(top = 30.dp, end = 60.dp)
+                .padding(top = 10.dp, end = 60.dp)
                 .fillMaxWidth()
                 .constrainAs(accountInput) {
                     top.linkTo(loginText.bottom)
@@ -182,7 +195,7 @@ fun RegisterScreen(
         )
         OutlinedTextField(
             modifier = Modifier
-                .padding(top = 20.dp, end = 60.dp)
+                .padding(top = 10.dp, end = 60.dp)
                 .fillMaxWidth()
                 .constrainAs(passwordInput) {
                     top.linkTo(accountInput.bottom)
@@ -221,7 +234,63 @@ fun RegisterScreen(
             singleLine = true,
             shape = ShapeDefaults.Medium,
         )
+        OutlinedTextField(
+            modifier = Modifier
+                .padding(top = 10.dp, end = 60.dp)
+                .fillMaxWidth()
+                .constrainAs(repeatPassword) {
+                    top.linkTo(passwordInput.bottom)
+                    start.linkTo(parent.start)
+                },
 
+            value = rePassword,
+            onValueChange = { value ->
+                if (value.length > 15) return@OutlinedTextField
+                rePassword = value
+            },
+            label = {
+                Text(
+                    text = stringResource(id = R.string.repeat_input_password),
+                    style = MaterialTheme.typography.labelMedium
+                )
+            },
+            trailingIcon = {
+                IconButton(onClick = {
+                    if (!passwordEnabled) {
+                        coroutineScope.launch {
+                            passwordEnabled = true
+                            delay(2000)
+                            passwordEnabled = false
+                        }
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.RemoveRedEye,
+                        contentDescription = null
+                    )
+                }
+            },
+            visualTransformation = if (passwordEnabled) VisualTransformation.None else passwordVisualTransformation,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            singleLine = true,
+            shape = ShapeDefaults.Medium,
+        )
+        TextButton(modifier = Modifier
+            .padding(bottom = 10.dp)
+            .height(height = 50.dp)
+            .constrainAs(login) {
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            onClick = {
+                toLogin()
+            }) {
+            Text(text = stringResource(R.string.have_account))
+        }
         OutlinedButton(
             modifier = Modifier
                 .padding(end = 20.dp, bottom = 20.dp)
@@ -235,10 +304,23 @@ fun RegisterScreen(
                 containerColor = Color.Transparent,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ),
-            onClick = { regist(account, password) },
+            onClick = { registry(account, password,rePassword) },
             shape = ShapeDefaults.Small
         ) {
             Text(text = stringResource(id = R.string.register))
+        }
+        when (state) {
+            is ResultState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.constrainAs(registerProgress) {
+                    centerTo(parent)
+                })
+            }
+//            注册成功
+            is ResultState.Success -> {
+                toLogin()
+            }
+            else ->{
+            }
         }
     }
 }
@@ -248,6 +330,8 @@ fun RegisterScreen(
 fun PreRegister() {
 
     RegisterScreen(
-        regist = { _, _ -> }
+        toLogin = {},
+        state = ResultState.Loading,
+        registry = { _, _ ,_-> }
     )
 }

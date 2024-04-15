@@ -42,13 +42,16 @@ abstract class BaseRetrofitClient {
 
     protected abstract fun handleBuilder(builder: OkHttpClient.Builder)
     private val contentType = "application/json".toMediaType()
+    private val json = Json{
+        ignoreUnknownKeys = true
+    }
+
     fun <S> getService(serviceClass: Class<S>, baseUrl: String): S {
         return Retrofit.Builder()
             .client(client)
-            .addConverterFactory(Json.asConverterFactory(contentType))
-//            .addConverterFactory(GsonConverterFactory.create())
-//            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            //    .addCallAdapterFactory(CoroutineCallAdapterFactory.invoke())
+            .addConverterFactory(
+                json.asConverterFactory(contentType)
+            )
             .baseUrl(baseUrl)
             .build().create(serviceClass)
     }

@@ -18,32 +18,28 @@ abstract class BaseViewModel<T> : ViewModel() {
         SharingStarted.WhileSubscribed(5000), ResultState.None
     )
 
-    protected fun emitState(state: ResultState<T>) {
-        launch {
-            _uiState.emit(state)
-        }
+      suspend fun emitState(state: ResultState<T>) {
+        _uiState.emit(state)
     }
 
 
 
     fun launch(
 //        catchBlock: suspend CoroutineScope.() -> Unit = {},
-//        finallyBlock: suspend CoroutineScope.() -> Unit = {},
+        finallyBlock: suspend CoroutineScope.( exception:Exception?) -> Unit = {},
         tryBlock: suspend CoroutineScope.() -> Unit,
     ) {
+        var exception:Exception?=null
         // 默认是执行在主线程，相当于launch(Dispatchers.Main)
-        viewModelScope.launch(GlobalCoroutineExceptionHandler) {
-            tryBlock()
+        viewModelScope.launch {
+            try {
+                tryBlock()
+            } catch (e: Exception) {
+                exception=e
+                BaseApp.baseAppViewModel.emitException(e)
+            } finally {
+                finallyBlock(exception)
+            }
         }
-//        viewModelScope.launch {
-//            try {
-//                tryBlock()
-//            } catch (e: Exception) {
-//                BaseApp.baseAppViewModel.emitException(e)
-//                catchBlock()
-//            } finally {
-//                finallyBlock()
-//            }
-//        }
     }
 }

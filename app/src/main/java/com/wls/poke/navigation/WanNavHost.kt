@@ -6,14 +6,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.wls.poke.ui.articledetail.navigation.articleDetailScreen
 import com.wls.poke.ui.articledetail.navigation.navigateToArticleDetail
-import com.wls.poke.ui.favorite.navigation.favoriteGraph
+import com.wls.poke.ui.favorite.favoriteGraph
 import com.wls.poke.ui.home.navigation.homeRoute
 import com.wls.poke.ui.home.navigation.homeScreen
 import com.wls.poke.ui.home.navigation.navigateToBanner
 import com.wls.poke.ui.login.navigation.loginScreen
 import com.wls.poke.ui.login.navigation.navigateToRegister
 import com.wls.poke.ui.login.navigation.registerScreen
-import com.wls.poke.ui.person.navigation.personGraph
+import com.wls.poke.ui.person.personGraph
 
 
 @Composable
@@ -46,7 +46,9 @@ fun WanNavHost(
         }, register = {
                navController.navigateToRegister()
         }, onBack = navController::popBackStack)
-        registerScreen()
+        registerScreen(toLogin = {
+            navController.popBackStack()
+        })
 
     }
 

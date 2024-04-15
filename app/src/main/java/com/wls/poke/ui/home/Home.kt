@@ -28,8 +28,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,11 +49,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.wls.poke.R
+import com.wls.poke.base.MyApp
 import com.wls.poke.entity.BannerEntity
 import com.wls.poke.entity.HomeArticleEntity
 import com.wls.poke.ui.component.Banner
 import com.wls.poke.ui.component.Indicator
-import com.wls.poke.ui.component.RefreshList
+import com.wls.poke.ui.component.RefreshPagingList
 import com.wls.poke.ui.component.rememberIndicatorState
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -65,31 +70,35 @@ fun HomeRoute(
 ) {
     val banner by viewModel.banner.collectAsState()
     val items = viewModel.homeArticles.collectAsLazyPagingItems()
+    val collectMap: SnapshotStateMap<Int, Boolean> = remember {
+       MyApp.appViewModel.articleCollectList
+    }
     HomeScreen(
         onShowSnackbar = onShowSnackbar,
         banner = banner,
         pagingItems = items,
         refresh = viewModel::refresh,
         onBannerClick = onBannerClick,
-        collectArticle = viewModel::collectArticle,
-        articleDetail =articleDetail,
+        articleDetail = articleDetail,
+        collectClick = viewModel::collectArticle,
+        collectMap = collectMap,
         modifier = modifier,
     )
-
 }
 
 @Composable
 internal fun HomeScreen(
     onShowSnackbar: suspend (String, String?) -> Boolean,
     banner: List<BannerEntity>,
+    collectMap: SnapshotStateMap<Int, Boolean>,
     pagingItems: LazyPagingItems<HomeArticleEntity.Data>,
     refresh: () -> Unit,
     onBannerClick: (String) -> Unit,
-    collectArticle: (article: HomeArticleEntity.Data) -> Unit,
+    collectClick: (id: Int, collect: Boolean) -> Unit,
     articleDetail: (article: HomeArticleEntity.Data) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    RefreshList(
+    RefreshPagingList(
         modifier = modifier,
         pagingItems = pagingItems,
         refresh = {
@@ -98,8 +107,16 @@ internal fun HomeScreen(
         headContent = {
             Banners(banner, onShowSnackbar, onBannerClick)
 
-        }) {
-        ArticlesItem(article = it, collectArticle=collectArticle, articleDetail = articleDetail)
+        }) { index, it ->
+        if (it.collect) {
+            collectMap[it.id] = true
+        }
+        ArticlesItem(
+            collectMap = collectMap,
+            article = it,
+            collectClick = collectClick,
+            articleDetail = articleDetail,
+        )
     }
 
 }
@@ -108,17 +125,24 @@ internal fun HomeScreen(
 //文章列表item
 @Composable
 fun ArticlesItem(
+    collectMap: Map<Int, Boolean>,
     article: HomeArticleEntity.Data,
+    collectClick: (id: Int, collected: Boolean) -> Unit,
     articleDetail: (article: HomeArticleEntity.Data) -> Unit,
-    collectArticle: (article: HomeArticleEntity.Data) -> Unit,
 ) {
+    val articleID = article.id
+    val collect by remember {
+        derivedStateOf {
+            articleID in collectMap.keys
+        }
+    }
     Card(
         modifier = Modifier
             .padding(top = 10.dp)
             .fillMaxWidth()
             .clickable {
                 articleDetail(article)
-            }, colors = CardDefaults.cardColors(Color.White)
+            }, colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary)
     ) {
         Row(
             Modifier
@@ -126,6 +150,13 @@ fun ArticlesItem(
                 .padding(10.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = article.superChapterName+"·"+article.chapterName,
+                    style = MaterialTheme.typography.labelSmall,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.inversePrimary
+                )
                 Text(
                     text = article.title,
                     style = MaterialTheme.typography.labelMedium,
@@ -146,7 +177,7 @@ fun ArticlesItem(
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        text = if (!article.niceDate.isEmpty()) stringResource(
+                        text = if (article.niceDate.isNotEmpty()) stringResource(
                             R.string.date,
                             article.niceDate
                         ) else "",
@@ -159,12 +190,13 @@ fun ArticlesItem(
 
             }
             IconButton(onClick = {
-                collectArticle(article)
+                collectClick(articleID, collect)
             }) {
+
                 Icon(
-                    imageVector = if (article.collect) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    imageVector = if (collect) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = null,
-                    tint = if (article.collect) Color.Red else Color.LightGray
+                    tint = if (collect) Color.Red.copy(alpha = 0.7f) else Color.LightGray
                 )
             }
         }
@@ -217,19 +249,38 @@ fun BannerItem(
         })
 }
 
+@Preview
+@Composable
+fun PreArticleItem() {
+    ArticlesItem(collectMap = remember {
+        mutableStateMapOf(2 to true)
+    }, article = HomeArticleEntity.Data(
+        id=2,
+        title = "WanAndroid",
+        collect = true,
+        author = "android",
+        niceDate = "2024-03-04",
+        superChapterName = "公众号",
+        chapterName = "weixin"
+    ), collectClick = { _, _ -> }, articleDetail = {})
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreHome() {
-    val viewModel: HomeViewModel = hiltViewModel()
     val data = PagingData.from<HomeArticleEntity.Data>(
         listOf(
             HomeArticleEntity.Data(
+                id = 1,
                 title = "WanAndroid",
                 collect = false,
                 author = "android",
-                niceDate = "2024-03-04"
+                niceDate = "2024-03-04",
+                superChapterName = "公众号",
+                chapterName = "weixin"
             ),
             HomeArticleEntity.Data(
+                id = 2,
                 title = "WanAndroid",
                 collect = true,
                 shareUser = "flutter",
@@ -246,12 +297,14 @@ fun PreHome() {
             BannerEntity(url = "https://t7.baidu.com/it/u=1956604245,3662848045&fm=193&f=GIF")
         ),
         pagingItems = flowOf(data).collectAsLazyPagingItems(),
-        refresh = { },
+        refresh = {},
         onBannerClick = {},
-        collectArticle = {
+        collectClick = {_,_->},
+        articleDetail = {},
+        collectMap = remember {
+            mutableStateMapOf(2 to true)
+        }
 
-        },
-        articleDetail = {}
     )
 }
 

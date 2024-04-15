@@ -1,19 +1,17 @@
 package com.wls.poke.ui.login.repository
 
 import com.wls.base.IRepository
-import com.wls.base.entity.BaseData
-import com.wls.base.entity.Null
 import com.wls.poke.http.ApiService
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
-class LoginRepository @Inject constructor(private val service: ApiService):IRepository{
+class LoginRepository @Inject constructor(private val service: ApiService) : IRepository {
 
-    suspend fun login(account: String, password: String): Flow<BaseData<Null>> =
-        withContext(Dispatchers.IO) {
-            flowOf(service.login(account, password))
-        }
+    suspend fun login(account: String, password: String) =
+        flowOf(service.login(account, password)).onStart { delay(1000) }
+            .flowOn(Dispatchers.IO)
 }

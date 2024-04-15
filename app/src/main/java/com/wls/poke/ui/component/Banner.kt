@@ -63,8 +63,6 @@ class IndicatorState(
 
     val from: Int get() = pagerState.currentValue - loopCount
     val to: Int get() = pagerState.targetValue - loopCount
-    val fraction: Float get() = pagerState.progress
-
 }
 
 @Composable

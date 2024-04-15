@@ -13,13 +13,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.wls.poke.base.userInfoEntity
 import com.wls.poke.http.NetworkMonitor
 import com.wls.poke.navigation.TopDestination
-import com.wls.poke.ui.favorite.navigation.favoriteRoute
+import com.wls.poke.ui.favorite.favoriteRoute
+import com.wls.poke.ui.favorite.navigateToFavoriteGraph
 import com.wls.poke.ui.home.navigation.homeRoute
 import com.wls.poke.ui.home.navigation.navigateToHome
 import com.wls.poke.ui.login.navigation.navigateToLogin
-import com.wls.poke.ui.person.navigation.personRoute
+import com.wls.poke.ui.person.navigateToPersonGraph
+
+import com.wls.poke.ui.person.personRoute
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -72,18 +76,20 @@ class AppState(
             }
 
             TopDestination.FAVORITE -> {
-
-                    navController.navigateToLogin()
-
-                  //  navController.navigateToFavoriteGraph(topNavOptions)
-
+                if (userInfoEntity == null) {
+                    navController.navigateToLogin(topNavOptions)
+                } else {
+                    navController.navigateToFavoriteGraph(topNavOptions)
+                }
             }
 
             TopDestination.PERSON -> {
+                if (userInfoEntity == null) {
+                    navController.navigateToLogin(topNavOptions)
+                } else {
+                    navController.navigateToPersonGraph(topNavOptions)
+                }
 
-                    navController.navigateToLogin()
-
-                   // navController.navigateToPersonGraph(topNavOptions)
 
             }
 

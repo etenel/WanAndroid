@@ -2,8 +2,8 @@ package com.wls.base.entity
 
 import com.wls.base.BaseApp
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 
 
@@ -12,8 +12,6 @@ sealed interface ResultState<out T> {
     data class Error(val exception: Throwable) : ResultState<Nothing>
     data object Loading : ResultState<Nothing>
     data object None : ResultState<Nothing>
-    data object Completion : ResultState<Nothing>
-
 }
 
 /**
@@ -39,9 +37,11 @@ suspend fun <T> Flow<BaseData<T>>.result(
         }
     }.onStart {
         emit(ResultState.Loading)
-    }.onCompletion {
-      emit(ResultState.Completion)
+    }.catch {
+       // BaseApp.baseAppViewModel.emitException(it)
+        ResultState.Error(it)
     }
+
 
 }
 

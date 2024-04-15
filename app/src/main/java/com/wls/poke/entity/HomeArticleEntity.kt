@@ -1,9 +1,11 @@
 package com.wls.poke.entity
 
 
+import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Keep
 @Serializable
 data class HomeArticleEntity(
     @SerialName("curPage")
@@ -19,8 +21,9 @@ data class HomeArticleEntity(
     @SerialName("size")
     val size: Int = 0,
     @SerialName("total")
-    val total: Int = 0
+    val total: Int = 0,
 ) {
+
     @Serializable
     data class Data(
         @SerialName("adminAdd")
@@ -92,14 +95,14 @@ data class HomeArticleEntity(
         @SerialName("visible")
         val visible: Int = 0,
         @SerialName("zan")
-        val zan: Int = 0
+        val zan: Int = 0,
     ) {
         @Serializable
         data class Tag(
             @SerialName("name")
             val name: String = "",
             @SerialName("url")
-            val url: String = ""
+            val url: String = "",
         )
     }
 }

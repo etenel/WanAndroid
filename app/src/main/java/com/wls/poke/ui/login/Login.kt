@@ -1,18 +1,17 @@
 package com.wls.poke.ui.login
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,10 +21,12 @@ import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
@@ -41,59 +42,82 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.wls.base.BaseApp
 import com.wls.base.entity.ResultState
 import com.wls.poke.R
+import com.wls.poke.base.myDataStore
+import com.wls.poke.base.userInfoEntity
+import com.wls.poke.entity.UserEntity
 import com.wls.poke.ui.login.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
     registry: () -> Unit,
     forgetPassword: () -> Unit,
-    onBack:()->Unit
+    onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
     LoginScreen(
         login = viewModel::login,
         registry = registry,
         forgetPassword = forgetPassword,
         state = state,
-        onBack =onBack,)
+        onBack = onBack,
+    )
 }
+
 @Composable
 internal fun LoginScreen(
     login: (account: String, password: String) -> Unit,
     registry: () -> Unit,
     forgetPassword: () -> Unit,
-    state: ResultState<Any?>,
-    onBack:()->Unit
+    state: ResultState<UserEntity>,
+    onBack: () -> Unit,
 ) {
-    var account by remember {
+    var account by rememberSaveable {
         mutableStateOf("")
     }
-    var password by remember {
+    var password by rememberSaveable {
         mutableStateOf("")
     }
+    val scope = rememberCoroutineScope()
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondColor = MaterialTheme.colorScheme.primaryContainer
+    LaunchedEffect(state) {
+        //            登录成功
+        if (state is ResultState.Success) {
+            if (state.data != null) {
+                userInfoEntity=state.data
+              BaseApp.appContext.myDataStore.edit { mutablePreferences ->
+                    mutablePreferences[stringPreferencesKey("user")] =
+                        Json.Default.encodeToString(state.data)
+                }
+            }
+            onBack()
+        }
 
+    }
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            //.padding(bottom=paddingValues.calculateBottomPadding())
-            .padding(
-                bottom = WindowInsets.systemBars
-                    .asPaddingValues()
-                    .calculateBottomPadding()
-            )
+            .navigationBarsPadding()
             .drawWithCache {
                 val primaryPath = Path()
-                val width = size.width / 10
-                val height = (size.height) / 10
+                val secondPath = Path()
+                val thirdPath = Path()
+                val fourPath = Path()
+                val width = size.width / 10f
+                val height = (size.height) / 10f
                 primaryPath.moveTo(0f, 0f)
                 primaryPath.lineTo(0f, height * 4)
                 primaryPath.cubicTo(
@@ -105,7 +129,6 @@ internal fun LoginScreen(
                     height * 3
                 )
                 primaryPath.lineTo(width * 10, 0f)
-                val secondPath = Path()
                 secondPath.lineTo(0f, height * 4.5f)
                 secondPath.cubicTo(
                     width * 5,
@@ -117,11 +140,11 @@ internal fun LoginScreen(
                 )
                 secondPath.lineTo(width * 10, 0f)
                 secondPath.op(primaryPath, secondPath, PathOperation.ReverseDifference)
-                val thirdPath = Path()
+
                 thirdPath.addRect(Rect(0f, height * 3, width * 10, height * 10))
                 thirdPath.op(secondPath, thirdPath, PathOperation.ReverseDifference)
                 thirdPath.op(primaryPath, thirdPath, PathOperation.ReverseDifference)
-                val fourPath = Path()
+
                 fourPath.moveTo(0f, height * 9)
                 fourPath.cubicTo(
                     width * 3.5f,
@@ -134,6 +157,9 @@ internal fun LoginScreen(
                 fourPath.lineTo(width * 10, height * 10)
                 fourPath.lineTo(0f, height * 10)
                 fourPath.close()
+
+
+
                 onDrawBehind {
                     drawPath(path = primaryPath, color = primaryColor)
                     drawPath(path = secondPath, color = secondColor)
@@ -149,15 +175,14 @@ internal fun LoginScreen(
         val (
             loginText, accountInput,
             passwordInput, forgetPw,
-            loginButton, register,
+            loginButton, register, loginProgress,
         ) = createRefs()
-        var passwordEnabled by remember {
+        var passwordEnabled by rememberSaveable {
             mutableStateOf(false)
         }
         val passwordVisualTransformation by remember {
             mutableStateOf(PasswordVisualTransformation())
         }
-        val coroutineScope = rememberCoroutineScope()
         Text(
             text = stringResource(R.string.login),
             style = MaterialTheme.typography.headlineLarge,
@@ -213,7 +238,7 @@ internal fun LoginScreen(
             trailingIcon = {
                 IconButton(onClick = {
                     if (!passwordEnabled) {
-                        coroutineScope.launch {
+                        scope.launch {
                             passwordEnabled = true
                             delay(2000)
                             passwordEnabled = false
@@ -273,11 +298,14 @@ internal fun LoginScreen(
         ) {
             Text(text = stringResource(id = R.string.login))
         }
+        if (state is ResultState.Loading) {
+            CircularProgressIndicator(modifier = Modifier.constrainAs(loginProgress) {
+                centerTo(parent)
+            })
+        }
     }
 
-    if (state is ResultState.Success){
-        onBack()
-    }
+
 }
 
 
@@ -286,5 +314,5 @@ internal fun LoginScreen(
 fun PreLogin() {
     val viewModel: LoginViewModel = hiltViewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    LoginScreen({ a, p -> }, {}, {}, state,{})
+    LoginScreen({ _, _ -> }, {}, {}, state, {})
 }

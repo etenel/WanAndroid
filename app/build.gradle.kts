@@ -4,6 +4,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
     id("kotlinx-serialization")
+    id("kotlin-parcelize")
     alias(libs.plugins.hilt)
     id("android.aop")
 }
@@ -100,6 +101,10 @@ dependencies {
     //datastore
     implementation(libs.androidx.dataStore.core)
     implementation(libs.androidx.dataStore.preference)
+    //room
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.foundation)
@@ -119,6 +124,7 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.glide.compose)
     //联网
+    implementation(libs.persistentCookieJar)
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.okhttp.logging)

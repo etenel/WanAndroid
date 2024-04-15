@@ -30,12 +30,12 @@ fun NavController.navigateToRegister(navOptions: NavOptions? = null) {
     this.navigate(registerRoute, navOptions)
 }
 
-fun NavGraphBuilder.registerScreen() {
+fun NavGraphBuilder.registerScreen(toLogin:()->Unit) {
     composable(
         route = registerRoute,
         //deepLinks = listOf(navDeepLink { uriPattern= }),
 //        arguments = listOf(navArgument(" "){type= NavType.StringType})
     ) {
-        RegisterRoute()
+        RegisterRoute(toLogin=toLogin)
     }
 }

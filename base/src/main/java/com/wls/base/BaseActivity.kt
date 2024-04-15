@@ -7,11 +7,13 @@ import androidx.activity.ComponentActivity
 import androidx.core.net.ParseException
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewModelScope
+import com.wls.base.utils.LogUtils
 import kotlinx.coroutines.launch
 import org.json.JSONException
 import retrofit2.HttpException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 abstract class BaseActivity : ComponentActivity() {
@@ -26,6 +28,7 @@ abstract class BaseActivity : ComponentActivity() {
         BaseApp.baseAppViewModel.apply {
             viewModelScope.launch {
                 exception.flowWithLifecycle(lifecycle).collect { exception ->
+                    LogUtils.d(exception)
                     //这里不光只能打印错误, 还可以根据不同的错误做出不同的逻辑处理
                     //这里只是对几个常用错误进行简单的处理, 展示这个类的用法, 在实际开发中请您自行对更多错误进行更严谨的处理
                     var msg = getString(R.string.unknow_error)
@@ -45,7 +48,7 @@ abstract class BaseActivity : ComponentActivity() {
                             msg = getString(R.string.data_error)
                         }
 
-                        is ConnectException -> {
+                        is ConnectException, is UnknownHostException -> {
                             msg = getString(R.string.connect_fail)
                         }
 
@@ -61,11 +64,10 @@ abstract class BaseActivity : ComponentActivity() {
 
 
             viewModelScope.launch {
-                errorResponse.flowWithLifecycle(lifecycle).collect{
-                    response->
+                errorResponse.flowWithLifecycle(lifecycle).collect { response ->
                     response?.let {
-                        Toast.makeText(this@BaseActivity,it.errorMsg,Toast.LENGTH_SHORT).show()
-                        if (it.errorCode==-1001){
+                        Toast.makeText(this@BaseActivity, it.errorMsg, Toast.LENGTH_SHORT).show()
+                        if (it.errorCode == -1001) {
                             login()
                         }
                     }
