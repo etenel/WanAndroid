@@ -1,9 +1,12 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package com.wls.base.entity
 
 import com.wls.base.BaseApp
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 
 
@@ -22,7 +25,7 @@ suspend fun <T> Flow<BaseData<T>>.result(
     onError: suspend (BaseData<T>) -> Boolean = { false },
     onSuccess: suspend (T?) -> Unit = {},
 ): Flow<ResultState<T>> {
-    return this.map<BaseData<T>, ResultState<T>> {
+    return this.mapLatest<BaseData<T>, ResultState<T>> {
         when (it.errorCode) {
             0 -> {
                 onSuccess(it.data)
@@ -41,6 +44,7 @@ suspend fun <T> Flow<BaseData<T>>.result(
        // BaseApp.baseAppViewModel.emitException(it)
         ResultState.Error(it)
     }
+
 
 
 }

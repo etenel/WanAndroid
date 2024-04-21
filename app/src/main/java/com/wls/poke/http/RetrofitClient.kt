@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 
 class RetrofitClient @Inject constructor(
-  //  private val loginCookieJar: LoginCookieJar,
+    //  private val loginCookieJar: LoginCookieJar,
 ) : BaseRetrofitClient() {
     val service by lazy {
         getService(ApiService::class.java, Api.BASE_URL)
@@ -23,6 +23,7 @@ class RetrofitClient @Inject constructor(
             SharedPrefsCookiePersistor(appContext)
         )
     }
+
     override fun handleBuilder(builder: OkHttpClient.Builder) {
         val httpCacheDirectory = File(appContext.cacheDir, "responses")
         val cacheSize = 10 * 1024 * 1024L // 10 MiB
@@ -32,29 +33,34 @@ class RetrofitClient @Inject constructor(
             .cookieJar(cookieJar)
             .addInterceptor { chain ->
                 var request = chain.request()
-
-                if (!ConnectivityManagerNetworkMonitor.networkMonitor.isConnected()) {
-                    request = request.newBuilder()
-                        .cacheControl(CacheControl.FORCE_CACHE)
-                        .build()
-                }
-                val response = chain.proceed(request)
-                if (!ConnectivityManagerNetworkMonitor.networkMonitor.isConnected()) {
-                    val maxAge = 60 * 60
-                    response.newBuilder()
-                        .removeHeader("Pragma")
-                        .header("Cache-Control", "public, max-age=$maxAge")
-                        .build()
-                } else {
+                if (request.method == "get") {
+                    if (!ConnectivityManagerNetworkMonitor.networkMonitor.isConnected()) {
+                        request = request.newBuilder()
+                            .cacheControl(CacheControl.FORCE_CACHE)
+                            .build()
+                    }
+                    val response = chain.proceed(request)
+                    if (!ConnectivityManagerNetworkMonitor.networkMonitor.isConnected()) {
+                        val maxAge = 60 * 60
+                        response.newBuilder()
+                            .removeHeader("Pragma")
+                            .header("Cache-Control", "public, max-age=$maxAge")
+                            .build()
+                    } else {
                         val maxStale = 60 * 60 * 24 * 28 // tolerate 4-weeks stale
                         response.newBuilder()
                             .removeHeader("Pragma")
                             .header("Cache-Control", "public, only-if-cached, max-stale=$maxStale")
                             .build()
 
+                    }
+                    response
+                } else {
+                    chain.proceed(request)
                 }
-                response
+
             }
+
     }
 
 }

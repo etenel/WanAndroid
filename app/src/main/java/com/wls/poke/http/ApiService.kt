@@ -54,7 +54,7 @@ interface ApiService {
     //登录
     @FormUrlEncoded
     @POST("user/login")
-    suspend fun login(
+   suspend  fun login(
         @Field("username") username: String,
         @Field("password") password: String,
     ): BaseData<UserEntity>

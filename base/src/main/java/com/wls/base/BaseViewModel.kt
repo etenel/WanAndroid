@@ -15,7 +15,7 @@ abstract class BaseViewModel<T> : ViewModel() {
     private val _uiState = MutableSharedFlow<ResultState<T>>()
     val uiState = _uiState.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000), ResultState.None
+        SharingStarted.WhileSubscribed(3000), ResultState.None
     )
 
       suspend fun emitState(state: ResultState<T>) {
@@ -32,6 +32,7 @@ abstract class BaseViewModel<T> : ViewModel() {
         var exception:Exception?=null
         // 默认是执行在主线程，相当于launch(Dispatchers.Main)
         viewModelScope.launch {
+
             try {
                 tryBlock()
             } catch (e: Exception) {

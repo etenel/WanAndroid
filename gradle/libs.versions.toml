@@ -36,6 +36,7 @@ androidxWork = "2.9.0"
 aop="1.3.1"
 coil = "2.5.0"
 constraintlayoutCompose = "1.0.1"
+cronetOkhttp = "0.1.0"
 databindingCompiler = "3.1.4"
 dependencyGuard = "0.4.3"
 firebaseBom = "32.7.0"
@@ -156,6 +157,7 @@ aspectj-ksp={group="io.github.FlyJingFish.AndroidAop",name="android-aop-ksp",ver
 coil-kt = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-kt-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-kt-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
+cronet-okhttp = { module = "com.google.net.cronet:cronet-okhttp", version.ref = "cronetOkhttp" }
 databinding-compiler = { group = "com.android.databinding",name="compiler", version.ref = "databindingCompiler" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }

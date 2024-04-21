@@ -28,6 +28,8 @@ class FavoriteViewModel @Inject constructor(private val repository: FavoriteRepo
     }
 
     fun articles(refresh: Boolean) {
+
+
         launch(
             finallyBlock = {
                 if (it == null) {
@@ -55,13 +57,13 @@ class FavoriteViewModel @Inject constructor(private val repository: FavoriteRepo
         }
     }
 
-    fun cancelCollect(article:CollectArticleEntity.Data) {
+    fun cancelCollect(article: CollectArticleEntity.Data) {
         launch {
-            repository.cancelCollect(article.id,article.originId).result {
+            repository.cancelCollect(article.id, article.originId).result {
                 listData.data.remove(article)
             }.collect()
         }
 
-    }
 
+    }
 }

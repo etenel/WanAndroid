@@ -73,7 +73,8 @@ fun LoginRoute(
         forgetPassword = forgetPassword,
         state = state,
         onBack = onBack,
-    )
+
+        )
 }
 
 @Composable
@@ -83,7 +84,8 @@ internal fun LoginScreen(
     forgetPassword: () -> Unit,
     state: ResultState<UserEntity>,
     onBack: () -> Unit,
-) {
+
+    ) {
     var account by rememberSaveable {
         mutableStateOf("")
     }
@@ -93,20 +95,19 @@ internal fun LoginScreen(
     val scope = rememberCoroutineScope()
     val primaryColor = MaterialTheme.colorScheme.primary
     val secondColor = MaterialTheme.colorScheme.primaryContainer
-    LaunchedEffect(state) {
-        //            登录成功
-        if (state is ResultState.Success) {
-            if (state.data != null) {
-                userInfoEntity=state.data
-              BaseApp.appContext.myDataStore.edit { mutablePreferences ->
-                    mutablePreferences[stringPreferencesKey("user")] =
-                        Json.Default.encodeToString(state.data)
-                }
-            }
-            onBack()
-        }
-
-    }
+//    LaunchedEffect(state) {
+//        //            登录成功
+//        if (state is ResultState.Success) {
+//            if (state.data != null) {
+//                userInfoEntity = state.data
+//                BaseApp.appContext.myDataStore.edit { mutablePreferences ->
+//                    mutablePreferences[stringPreferencesKey("user")] =
+//                        Json.Default.encodeToString(state.data)
+//                }
+//            }
+//            onBack()
+//        }
+//    }
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
@@ -298,11 +299,36 @@ internal fun LoginScreen(
         ) {
             Text(text = stringResource(id = R.string.login))
         }
-        if (state is ResultState.Loading) {
-            CircularProgressIndicator(modifier = Modifier.constrainAs(loginProgress) {
-                centerTo(parent)
-            })
+        when (state) {
+            ResultState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.constrainAs(loginProgress) {
+                    centerTo(parent)
+                })
+            }
+
+            is ResultState.Success -> {
+             LaunchedEffect(state) {
+                 if (state.data != null) {
+                     userInfoEntity = state.data
+                     BaseApp.appContext.myDataStore.edit { mutablePreferences ->
+                         mutablePreferences[stringPreferencesKey("user")] =
+                             Json.Default.encodeToString(state.data)
+                     }
+
+                 }
+                 onBack()
+             }
+            }
+
+            else -> {
+
+            }
         }
+//        if (state is ResultState.Loading) {
+//            CircularProgressIndicator(modifier = Modifier.constrainAs(loginProgress) {
+//                centerTo(parent)
+//            })
+//        }
     }
 
 
