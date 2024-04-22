@@ -5,6 +5,7 @@ import android.os.Environment
 import android.widget.Toast
 import java.io.File
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 object CacheUtil {
     /**
@@ -47,10 +48,12 @@ object CacheUtil {
 private fun deleteDir(file: File): Boolean {
     if (file.isDirectory) {
         val children = file.list()
-        for (i in children.indices) {
-            val success = deleteDir(File(file, children[i]))
-            if (!success) {
-                return false
+        if (children != null) {
+            for (i in children.indices) {
+                val success = deleteDir(File(file, children[i]))
+                if (!success) {
+                    return false
+                }
             }
         }
     }
@@ -69,12 +72,14 @@ fun getFolderSize(file: File?): Long {
     file?.run {
         try {
             val fileList = listFiles()
-            for (i in fileList.indices) {
-                // 如果下面还有文件
-                size += if (fileList[i].isDirectory) {
-                    getFolderSize(fileList[i])
-                } else {
-                    fileList[i].length()
+            if (fileList != null) {
+                for (i in fileList.indices) {
+                    // 如果下面还有文件
+                    size += if (fileList[i].isDirectory) {
+                        getFolderSize(fileList[i])
+                    } else {
+                        fileList[i].length()
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -95,21 +100,21 @@ fun getFormatSize(size: Double): String {
     val megaByte = kiloByte / 1024
     if (megaByte < 1) {
         val result1 = BigDecimal(kiloByte.toString())
-        return result1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "KB"
+        return result1.setScale(2,  RoundingMode.HALF_UP).toPlainString() + "KB"
     }
 
     val gigaByte = megaByte / 1024
     if (gigaByte < 1) {
         val result2 = BigDecimal(megaByte.toString())
-        return result2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "MB"
+        return result2.setScale(2,  RoundingMode.HALF_UP).toPlainString() + "MB"
     }
 
     val teraBytes = gigaByte / 1024
     if (teraBytes < 1) {
         val result3 = BigDecimal(gigaByte.toString())
-        return result3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "GB"
+        return result3.setScale(2, RoundingMode.HALF_UP).toPlainString() + "GB"
     }
 
     val result4 = BigDecimal(teraBytes)
-    return result4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "TB"
+    return result4.setScale(2,  RoundingMode.HALF_UP).toPlainString() + "TB"
 }

@@ -678,7 +678,7 @@ class LogUtils private constructor() {
                     sb.toString()
                 }
             }
-            return if (body!!.length == 0) NOTHING else body
+            return if (body!!.isEmpty()) NOTHING else body
         }
 
         private fun formatObject(type: Int, `object`: Any?): String? {

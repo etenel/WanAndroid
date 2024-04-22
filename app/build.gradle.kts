@@ -124,6 +124,8 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.glide.compose)
     //联网
+    implementation(libs.cronet.api)
+    implementation(libs.play.services.cronet)
     implementation (libs.cronet.okhttp)
     implementation(libs.persistentCookieJar)
     implementation(libs.retrofit.core)

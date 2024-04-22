@@ -2,6 +2,7 @@ package com.wls.poke.base
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.android.gms.net.CronetProviderInstaller
 import com.wls.base.BaseApp
 import com.wls.base.utils.LogUtils
 import com.wls.poke.BuildConfig
@@ -21,6 +22,12 @@ class MyApp: BaseApp() {
         appViewModel = getAppViewModelProvider()[AppViewModel::class.java]
         LogUtils.config.setLogSwitch(BuildConfig.LOG_ENABLE)
             .setConsoleSwitch(BuildConfig.LOG_ENABLE)
-
+        CronetProviderInstaller.installProvider(appContext).addOnCompleteListener {
+            if (it.isSuccessful) {
+                LogUtils.i( "Successfully installed Play Services provider: $it")
+            } else {
+                LogUtils.w( "Unable to load Cronet from Play Services", it.exception.toString())
+            }
+        }
     }
 }
